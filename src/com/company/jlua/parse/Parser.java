@@ -68,6 +68,23 @@ public class Parser {
             return null;
         }
         List<String> args = new ArrayList<String>();
-        return null;
+        while(true) {
+            if(lex.getCurrTok() != Token.IDENTIFIER) {
+                return null;
+            }
+            args.add(lex.getIdentifier());
+            lex.nextTok();
+            if (lex.getCurrTok() != ','){
+                break;
+            }
+            lex.nextTok();
+        }
+        if (lex.getCurrTok() != ')') {
+            return null;
+        }
+        PrototypeAst ast = new PrototypeAst();
+        ast.setFunctionName(functionName);
+        ast.setArgs(args);
+        return ast;
     }
 }

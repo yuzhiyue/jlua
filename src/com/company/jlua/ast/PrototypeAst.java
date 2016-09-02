@@ -8,4 +8,20 @@ import java.util.List;
 public class PrototypeAst {
     private String functionName;
     private List<String> args;
+
+    public String getFunctionName() {
+        return functionName;
+    }
+
+    public void setFunctionName(String functionName) {
+        this.functionName = functionName;
+    }
+
+    public List<String> getArgs() {
+        return args;
+    }
+
+    public void setArgs(List<String> args) {
+        this.args = args;
+    }
 }
