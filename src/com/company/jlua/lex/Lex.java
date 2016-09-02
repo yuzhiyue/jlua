@@ -1,26 +1,34 @@
-package com.company.jlua;
+package com.company.jlua.lex;
 
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * Created by Cosine on 2016/9/1.
- */
-
-enum Token {
-    EOF,
-    FUNCTION,
-    NUMBER,
-    NAME
-}
 
 public class Lex {
     private static Map<String, Token> reservedWords = new HashMap<String, Token>(){{
         put("function", Token.FUNCTION);
     }};
     private String text;
-    private char currChar;
+    private char currChar = ' ';
     private int pos = 0;
+
+    private double number;
+    private String identifier;
+    private char c;
+
+    public double getNumber() {
+        return number;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public char getC() {
+        return c;
+    }
+
+    public void setText(String val) { this.text = val;}
+
     public Token getTok() {
 
         while(true) {
@@ -30,12 +38,21 @@ public class Lex {
                     nextChar();
                     break;
                 }
+                case '\n':
+                case '\r': {
+                    char pre = currChar;
+                    nextChar();
+                    if((currChar == '\r' || currChar == '\n') && pre != currChar) {
+                        nextChar();
+                    }
+                    break;
+                }
                 case 0: {
                     return Token.EOF;
                 }
                 default: {
                     if(Character.isDigit(currChar)) {
-                        double number = readNumber();
+                        number = readNumber();
                         return Token.NUMBER;
                     }
                     if(Character.isAlphabetic(currChar)) {
@@ -44,8 +61,13 @@ public class Lex {
                         if (reservedWord != null) {
                             return  reservedWord;
                         } else {
-                            return Token.NAME;
+                            identifier = word;
+                            return Token.IDENTIFIER;
                         }
+                    } else {
+                        c = currChar;
+                        nextChar();
+                        return Token.SINGLE_CHAR;
                     }
                 }
             }
@@ -56,6 +78,7 @@ public class Lex {
         String numStr = "";
         do{
             numStr += currChar;
+            nextChar();
         }while(Character.isDigit(currChar) || currChar == '.');
         return Double.parseDouble(numStr);
     }
@@ -64,6 +87,7 @@ public class Lex {
         String word = "";
         do {
             word += currChar;
+            nextChar();
         } while (Character.isAlphabetic(currChar) || Character.isDigit(currChar));
         return word;
     }
