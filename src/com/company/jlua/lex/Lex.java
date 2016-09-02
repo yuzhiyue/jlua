@@ -4,16 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Lex {
-    private static Map<String, Token> reservedWords = new HashMap<String, Token>(){{
+    private static Map<String, Integer> reservedWords = new HashMap<String, Integer>(){{
         put("function", Token.FUNCTION);
     }};
     private String text;
     private char currChar = ' ';
     private int pos = 0;
-
+    private int currTok;
     private double number;
     private String identifier;
-    private char c;
 
     public double getNumber() {
         return number;
@@ -23,13 +22,17 @@ public class Lex {
         return identifier;
     }
 
-    public char getC() {
-        return c;
+    public int getCurrTok() {
+        return currTok;
     }
 
     public void setText(String val) { this.text = val;}
 
-    public Token getTok() {
+    public void nextTok() {
+        currTok = getTok();
+    }
+
+    public int getTok() {
 
         while(true) {
             switch (currChar) {
@@ -57,7 +60,7 @@ public class Lex {
                     }
                     if(Character.isAlphabetic(currChar)) {
                         String word = readWord();
-                        Token reservedWord = reservedWords.get(word);
+                        Integer reservedWord = reservedWords.get(word);
                         if (reservedWord != null) {
                             return  reservedWord;
                         } else {
@@ -65,9 +68,9 @@ public class Lex {
                             return Token.IDENTIFIER;
                         }
                     } else {
-                        c = currChar;
+                        char c = currChar;
                         nextChar();
-                        return Token.SINGLE_CHAR;
+                        return c;
                     }
                 }
             }
